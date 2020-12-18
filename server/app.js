@@ -30,6 +30,7 @@ app.listen(port, function(){
         - Provided a "Source" directory
         - Search for the favorites_list (by filename) in the "Source" directory
         - Track the new file_locations in a new map
+        - Print to File
 
         [Function 3]
         - Verify the output of Function 2
@@ -88,23 +89,25 @@ app.listen(port, function(){
     });
 
 
-
    /*
       Version 2
 
-        [Version_1.Function2]
-          - update each file, rather than copy
-          - Need to specify actual meta-data updates
+        [Function 3]
+          - Using the favoritesList, create the favorites in the source directory
+          - Need to specify actual meta-data updates, update to filename?
    */
 
 
    /*
       Version 3
 
-        [Version_1.Function1]
+        [Version_2.Function 3]
         - should eliminate the need for a pre-defined "favorites directory"
         - Will depend on the ability to identify Samsung_Gallery "Favorites" tag on the file metadata
             - What type of data do I need to be reading? EXIF? IPTC? XMP?
+
+        - Look into SwiftTags app on GooglePlay.
+          (If tags can be applied on the source, Function_1 can be re-written to assemble the favorites list from those tags)
 
    */
 
