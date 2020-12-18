@@ -3,14 +3,17 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
 var app = express();
+// Load Local Helper File
+require('./helper.js');
 
 // App-specific dependencies
-var fs = require('fs');
 var ExifImage = require('exif').ExifImage;
 
-// Variables to be converted to input
+// FileNames of the Favorites_Dir will be tracked in a list
 var favorites_dir = 'C:/Users/glenn/Pictures/PhonePictures';
-var favorites_dir = 'C:/Users/glenn/Pictures';
+var favorites_dir = 'C:/Users/glenn/Documents/FavoritesCopies';
+// Contents of the gallery_dir will be updated as "Favorites"
+var gallery_dir = 'C:/Users/glenn/Pictures';
 
 app.listen(port, function(){
   console.log('App listening on port %s', this.address().port, '\n');
@@ -26,91 +29,45 @@ app.listen(port, function(){
         - Provided list of filenames (favorites_list)
         - Provided a "Source" directory
         - Search for the favorites_list (by filename) in the "Source" directory
-        - Track the new file_locations in a new map 
+        - Track the new file_locations in a new map
 
         [Function 3]
         - Verify the output of Function 2
    */
 
-
-   var stringresult = '';
-   forLoopPromises = function(x, sub){
-     console.log('\nforLoopPromises('+x+')');
-     return new Promise(function(resolve2, reject2) {
-       for(let i = 1, p=Promise.resolve(); i<=x; i++){
-         p = p.then(_ => new Promise(resolve=>{
-           setTimeout(function(){
-             console.log(x+' = ' + i);
-             stringresult+=' ('+x+'.'+i+')';
-             if(i == 4) forLoopPromises(3, true).then(function(results){
-               console.log('\nResolving sub-loop...');
-               resolve();
-             });
-             else{
-               if(i == x-1) resolve2(stringresult);
-               else resolve();
-             }
-
-           }, Math.random() * 500)
-         }));
-       }
-     });
-
-   }
-
-   /*forLoopPromises(10).then(function(results){
-     console.log('\nForLoopPromises... completed');
-     console.log('RESULTS : ' + results);
-   });*/
-
-
    var directoryMap = {};
+   var favoritesMap = {};
 
-    swimDirForLoop = function(dirpath){
-      console.log('\n\nforLoopSwimming');
+    /* [ FUNCTION_1 ]
+        Export Favorites (filenames) from given directory
+    */
+    var fs1 = fs;
+    swimDirForLoop(favorites_dir, favoritesMap).then(function(results){
+      console.log('\nFavoritesDirectory... swim completed');
+      console.log('\nPrint FavoritesMap Summary...');
+      // results returned have already been stored in favoritesMap var
+      printObjectSummary(favoritesMap);
 
-      return new Promise(function(resolve2, reject2){
-        fs.readdir(dirpath, function(err, files){
-          var listlength = files.length;
-          var filesNotDirs = files;
-          if(listlength <= 0) resolve2();
-          for(let i=0, p=Promise.resolve(); i<listlength; i++){
-            p = p.then(_ => new Promise(resolve =>{
-              var file = files[i];
-              var isDir = fs.statSync(dirpath +'/'+file).isDirectory();
-              if(isDir){
-                console.log('**SubDirectory Found!**');
-                var subpath = dirpath +'/' +file;
-                console.log(subpath);
-                swimDirForLoop(subpath).then(function(results){
-                  console.log('Resolving sub-loop...');
-                  if(i==listlength-1) resolve2(directoryMap);
-                  else resolve();
-                });
-              }else {
-                // directoryMap[dirpath] = files;
-                if(!directoryMap[dirpath]) directoryMap[dirpath] = [];
-                directoryMap[dirpath].push(file);
-
-                if(i==listlength-1) {
-                  console.log('Last File Detected...');
-                  resolve2(directoryMap);
-                }
-                else resolve();
-              }
-            }));
-          }
-        });
-
-      })
-    }
-
-    swimDirForLoop(favorites_dir).then(function(results){
-      console.log('\nForLoopPromises... completed');
-      console.log('RESULTS : ' + Object.keys(results));
-      Object.keys(results).forEach(function(key, i){
-        console.log(key + ' (' + results[key].length + ')');
+      // initialize an array to be used to filter the return result of the Source-Dir swim
+      var favoritesList = [];
+      Object.keys(favoritesMap).forEach(function(k, name){
+        console.log(favoritesMap[k]);
+        favoritesList = favoritesList.concat(favoritesMap[k]);
       });
+      console.log('Favorites List ... ' + favoritesList.length);
+
+
+      swimDirForLoop(gallery_dir, directoryMap, favoritesList).then(function(gall_results){
+        console.log('\nGalleryDirectory... swim completed');
+        console.log('\nPrint Gallery/DirectoryMap Summary...');
+        // results returned have already been stored in directoryMap var
+        printObjectSummary(directoryMap);
+
+        // Write JSON Directory to File
+        // (This is the list of Actual File Locations that should be tagged as Favorites according to the favoritesDirectory input)
+        fs1.writeFileSync('source_favorites.json', JSON.stringify(directoryMap,null, 2));
+      });
+      return;
 
       // Test ExifImage
       try{
