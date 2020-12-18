@@ -1,0 +1,12 @@
+{
+  "name": "find_favorites",
+  "version": "1.0.0",
+  "description": "Identify, copy List of Samsung Gallery Favorites, preserving original metadata",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nolan Glennon",
+  "license": "ISC"
+}
