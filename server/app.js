@@ -15,6 +15,13 @@ var favorites_dir = 'C:/Users/glenn/Documents/FavoritesCopies';
 // Contents of the gallery_dir will be updated as "Favorites"
 var gallery_dir = 'C:/Users/glenn/Pictures';
 
+
+// TEST WITH SD CARD
+var favorites_dir = 'E:/Favorites_Dec_18_20';
+var gallery_dir = 'E:/DCIM';
+
+
+
 app.listen(port, function(){
   console.log('App listening on port %s', this.address().port, '\n');
 
@@ -108,6 +115,13 @@ app.listen(port, function(){
 
         - Look into SwiftTags app on GooglePlay.
           (If tags can be applied on the source, Function_1 can be re-written to assemble the favorites list from those tags)
+          UPDATE :  SwiftTags app *does not* have a Batch/multi-select feature and an apparently low-grade UI.
+                    However, the approach sounds sound
+
+        Version 3 may not be able to eliminate the need for a "favorites directory" input,
+        but it should :
+          1. Update the filename with a pre-defined appendage used to identify ALL favorites
+          2. Add a custom tag to the EXIF data of the files
 
    */
 
