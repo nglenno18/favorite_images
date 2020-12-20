@@ -58,28 +58,43 @@ swimDirForLoop = function(dirpath, mp, filteredlist){
 updateFavorites = function(directoryMap){
   console.log('*****\nupdateFavorites(directoryMap)\n*****');
 
+  // CONVERT THIS TO ASYNC
+
 
   var dirs = Object.keys(directoryMap);
-  dirs.forEach(function(pth, i){
-    console.log('\nDirectory = ' + pth);
-    var files = directoryMap[pth];
-    files.forEach(function(name, x){
-      // determine if the file is already "Tagged"
-      if(name.indexOf(FAVORITES_TAG)==-1){
-        var reversename = name.split('').reverse().join('');
-        // console.log('\t Rev = ' + reversename);
-        var extension = reversename.substring(0,reversename.indexOf('.')+1).split('').reverse().join('');
-        // console.log('\t Ext = ' + extension);
-        var filename = name.substring(0, name.length-extension.length)
-                     + FAVORITES_TAG + extension;
-        console.log('\tFile = ' + filename);
-        var newpath = pth + '/' + filename;
-        var oldpath = pth + '/' + name;
-        /*fs.rename(newpath, oldpath, function(err){
-          console.log('********** ERROR Renaming file!');
-        });*/
+  for(let d=0, pd=Promise.resolve(); d<dirs.length; d++){
+    pd = pd.then(__ => new Promise(resolve2 =>{
+      var pth = dirs[d];
+      console.log('\nDirectory = ' + pth);
+      var files = directoryMap[pth];
+      var len = 0;
+      if(files) len = files.length;
+      for(let i=0, p=Promise.resolve(); i<files.length; i++){
+        p = p.then(_ => new Promise(resolve =>{
+          var name = files[i];
+          if(name.indexOf(FAVORITES_TAG)==-1){
+            var reversename = name.split('').reverse().join('');
+            // console.log('\t Rev = ' + reversename);
+            var extension = reversename.substring(0,reversename.indexOf('.')+1).split('').reverse().join('');
+            // console.log('\t Ext = ' + extension);
+            var filename = name.substring(0, name.length-extension.length)
+                         + FAVORITES_TAG + extension;
+            // console.log('\tFile = ' + filename);
+            var newpath = pth + '/' + filename;
+            var oldpath = pth + '/' + name;
+            setTimeout(function(){
+              console.log('\tFile (#' + i + ') = ' + filename);
+              if(i==files.length-1) resolve2();
+              resolve();
+            }, Math.floor(Math.random()*500));
+            /*fs.rename(newpath, oldpath, function(err){
+              console.log('********** ERROR Renaming file!');
+            });*/
+          }
+        }));
       }
-    });
+    }));
+
     // fs.rename(pth + '/' + filename.lastIndexOf('.'))
-  });
+  };
 }
