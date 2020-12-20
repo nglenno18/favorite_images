@@ -1,4 +1,5 @@
 fs = require('fs');
+const FAVORITES_TAG = '__fvrt_'
 
 printObjectSummary = function(jsonObject){
   Object.keys(jsonObject).forEach(function(key, i){
@@ -50,4 +51,35 @@ swimDirForLoop = function(dirpath, mp, filteredlist){
     });
 
   })
+}
+
+
+
+updateFavorites = function(directoryMap){
+  console.log('*****\nupdateFavorites(directoryMap)\n*****');
+
+
+  var dirs = Object.keys(directoryMap);
+  dirs.forEach(function(pth, i){
+    console.log('\nDirectory = ' + pth);
+    var files = directoryMap[pth];
+    files.forEach(function(name, x){
+      // determine if the file is already "Tagged"
+      if(name.indexOf(FAVORITES_TAG)==-1){
+        var reversename = name.split('').reverse().join('');
+        // console.log('\t Rev = ' + reversename);
+        var extension = reversename.substring(0,reversename.indexOf('.')+1).split('').reverse().join('');
+        // console.log('\t Ext = ' + extension);
+        var filename = name.substring(0, name.length-extension.length)
+                     + FAVORITES_TAG + extension;
+        console.log('\tFile = ' + filename);
+        var newpath = pth + '/' + filename;
+        var oldpath = pth + '/' + name;
+        /*fs.rename(newpath, oldpath, function(err){
+          console.log('********** ERROR Renaming file!');
+        });*/
+      }
+    });
+    // fs.rename(pth + '/' + filename.lastIndexOf('.'))
+  });
 }

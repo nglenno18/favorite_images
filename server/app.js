@@ -17,8 +17,8 @@ var gallery_dir = 'C:/Users/glenn/Pictures';
 
 
 // TEST WITH SD CARD
-var favorites_dir = 'E:/Favorites_Dec_18_20';
-var gallery_dir = 'E:/DCIM';
+// var favorites_dir = 'E:/Favorites_Dec_18_20';
+// var gallery_dir = 'E:/DCIM';
 
 
 
@@ -74,6 +74,10 @@ app.listen(port, function(){
         // Write JSON Directory to File
         // (This is the list of Actual File Locations that should be tagged as Favorites according to the favoritesDirectory input)
         fs1.writeFileSync('source_favorites.json', JSON.stringify(directoryMap,null, 2));
+        console.log('File Written...');
+
+        // Invoke Update
+        updateFavorites(directoryMap);
       });
       return;
 
@@ -98,15 +102,6 @@ app.listen(port, function(){
 
    /*
       Version 2
-
-        [Function 3]
-          - Using the favoritesList, create the favorites in the source directory
-          - Need to specify actual meta-data updates, update to filename?
-   */
-
-
-   /*
-      Version 3
 
         [Version_2.Function 3]
         - should eliminate the need for a pre-defined "favorites directory"
