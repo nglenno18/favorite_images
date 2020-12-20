@@ -77,7 +77,9 @@ app.listen(port, function(){
         console.log('File Written...');
 
         // Invoke Update
-        updateFavorites(directoryMap);
+        updateDirectory(directoryMap, 'REMOVE').then(function(results){
+          console.log('\n\n updateDirectory COMPLETED...');
+        });
       });
       return;
 
